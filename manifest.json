@@ -63,7 +63,7 @@
     "h5" : {
         "template" : "template.h5.html",
         "router" : {
-            "base" : "./"
+            "base" : ""
         }
     },
     "vueVersion" : "2"
