@@ -1,6 +1,6 @@
 <template>
   <view class="uni-container">
-    <uni-forms ref="form" :value="formData" validateTrigger="bind">
+    <uni-forms ref="form" :value="formData" :rules="rules" validateTrigger="bind">
       <uni-forms-item name="role_id" label="唯一ID" required>
         <uni-easyinput placeholder="角色唯一标识，不可修改，不允许重复" v-model="formData.role_id" trim="both"></uni-easyinput>
       </uni-forms-item>
@@ -56,9 +56,6 @@
           ...getValidator(Object.keys(formData))
         }
       }
-    },
-    onReady() {
-      this.$refs.form.setRules(this.rules)
     },
     methods: {
       /**

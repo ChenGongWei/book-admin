@@ -1,6 +1,6 @@
 <template>
 	<view class="uni-container">
-		<uni-forms ref="form" :value="formData" validateTrigger="bind">
+		<uni-forms ref="form" :value="formData" :rules="rules" validateTrigger="bind">
 			<uni-forms-item name="book_id" label="图书id" required>
 				<uni-easyinput placeholder="请填写图书id，不可重复(例如: TP-2102)" v-model="formData.book_id" trim="both" />
 			</uni-forms-item>
@@ -85,9 +85,6 @@
 			const id = e.id
 			this.formDataId = id
 			this.getDetail(id)
-		},
-		onReady() {
-			this.$refs.form.setRules(this.rules)
 		},
 		methods: {
 			/**

@@ -1,6 +1,6 @@
 <template>
 	<view class="uni-container">
-		<uni-forms ref="form" :value="formData" :rules="rules" validateTrigger="bind" @submit="submitForm()">
+		<uni-forms ref="form" :value="formData" :rules="rules" validateTrigger="bind">
 			<uni-forms-item name="book_id" label="图书id" required>
 				<uni-easyinput placeholder="请输入图书id，不可重复(例如: TP-20153)" v-model="formData.book_id" trim="both" />
 			</uni-forms-item>
@@ -109,6 +109,24 @@
 				}).finally(() => {
 					uni.hideLoading()
 				})
+			},
+			// 获取上传状态
+			select(e){
+				console.log('选择文件：',e)
+			},
+			// 获取上传进度
+			progress(e){
+				console.log('上传进度：',e)
+			},
+			
+			// 上传成功
+			success(e){
+				console.log('上传成功',e)
+			},
+			
+			// 上传失败
+			fail(e){
+				console.log('上传失败：',e)
 			}
 		}
 	}

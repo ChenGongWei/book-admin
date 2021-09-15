@@ -1,6 +1,6 @@
 <template>
   <view class="uni-container">
-    <uni-forms ref="form" :value="formData" validateTrigger="bind">
+    <uni-forms ref="form" :value="formData" :rules="rules" validateTrigger="bind">
       <uni-forms-item name="permission_id" label="权限ID" required>
         <input placeholder="权限唯一标识，不可修改，不允许重复" @input="binddata('permission_id', $event.detail.value)" class="uni-input-border" v-model="formData.permission_id" trim="both" />
       </uni-forms-item>
@@ -51,9 +51,6 @@
           ...getValidator(Object.keys(formData))
         }
       }
-    },
-    onReady() {
-      this.$refs.form.setRules(this.rules)
     },
     methods: {
       /**
