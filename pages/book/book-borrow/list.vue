@@ -21,13 +21,13 @@
 				:options="options">
 				<uni-table :loading="loading" :emptyText="error.message || '没有更多数据'" border stripe>
 					<uni-tr>
-						<uni-th align="center">图书id</uni-th>
-						<uni-th align="center">图书名</uni-th>
-						<uni-th align="center">借阅人账号</uni-th>
-						<uni-th align="center">借阅人姓名</uni-th>
-						<uni-th align="center">借阅时间</uni-th>
-						<uni-th align="center">归还时间</uni-th>
-						<uni-th align="center">状态</uni-th>
+						<uni-th align="center" sortable @sort-change="sortChange($event, 'book_id')">图书id</uni-th>
+						<uni-th align="center" sortable @sort-change="sortChange($event, 'book_name')">图书名</uni-th>
+						<uni-th align="center" sortable @sort-change="sortChange($event, 'lend_uid')">借阅人账号</uni-th>
+						<uni-th align="center" sortable @sort-change="sortChange($event, 'lend_user')">借阅人姓名</uni-th>
+						<uni-th align="center" sortable @sort-change="sortChange($event, 'create_date')">借阅时间</uni-th>
+						<uni-th align="center" sortable @sort-change="sortChange($event, 'end_date')">归还时间</uni-th>
+						<uni-th align="center" sortable @sort-change="sortChange($event, 'status')">状态</uni-th>
 						<uni-th width="204" align="center">操作</uni-th>
 					</uni-tr>
 					<uni-tr v-for="(item,index) in data" :key="index">
@@ -82,6 +82,11 @@
 	// 分页配置
 	const pageSize = 20
 	const pageCurrent = 1
+	
+	const orderByMapping = {
+		"ascending": "asc",
+		"descending": "desc"
+	}
 
 	export default {
 		data() {
@@ -147,21 +152,21 @@
 					}
 				})
 			},
-			// 多选处理
-			selectedItems() {
-				var dataList = this.$refs.udb.dataList
-				return this.selectedIndexs.map(i => dataList[i]._id)
-			},
-			// 批量删除
-			delTable() {
-				this.$refs.udb.remove(this.selectedItems())
-			},
-			// 多选
-			selectionChange(e) {
-				this.selectedIndexs = e.detail.index
-			},
+			
 			confirmDelete(id) {
 				this.$refs.udb.remove(id)
+			},
+			sortChange(e, name) {
+				this.orderByFieldName = name;
+				if (e.order) {
+					this.orderby = name + ' ' + orderByMapping[e.order]
+				} else {
+					this.orderby = ''
+				}
+				this.$refs.table.clearSelection()
+				this.$nextTick(() => {
+					this.$refs.udb.loadData()
+				})
 			},
 			/**
 			 * 归还书籍

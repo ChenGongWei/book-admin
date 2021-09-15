@@ -8,9 +8,7 @@
 				<uni-easyinput v-model="formData.name" :clearable="false" placeholder="请输入菜单名称" />
 			</uni-forms-item>
 			<uni-forms-item name="icon" label="图标 class" style="margin-bottom: 40px;">
-				<uni-easyinput v-model="formData.icon" :clearable="false" placeholder="请输入菜单图标css样式类名">
-					<span slot="right" style="color: #007aff; cursor: pointer;padding-right: 10px;" @click="showIconPopup">内置图标</span>
-				</uni-easyinput>
+				<uni-easyinput v-model="formData.icon" :clearable="false" placeholder="请输入菜单图标css样式类名" />
 				<uni-link font-size="12" href="https://uniapp.dcloud.net.cn/uniCloud/admin?id=icon-%e5%9b%be%e6%a0%87" text="如何使用自定义图标？"
 				 class="uni-form-item-tips"></uni-link>
 			</uni-forms-item>
@@ -23,9 +21,9 @@
 			<uni-forms-item name="parent_id" label="父菜单标识">
 				<uni-easyinput v-model="formData.parent_id" :clearable="false" placeholder="请输入父级菜单标识, 一级菜单不需要填写" />
 			</uni-forms-item>
-			<uni-forms-item name="permission" label="权限列表" style="margin-bottom: 60px;" class="flex-center-x">
+			<uni-forms-item name="permission" label="权限列表" style="margin-bottom: 10px;" class="flex-center-x">
 				<uni-data-checkbox :multiple="true" v-model="formData.permission" collection="uni-id-permissions" field="permission_name as text, permission_id as value" />
-				<view class="uni-form-item-tips">
+				<view class="uni-form-item-tips" style="position: relative; top: 0;">
 					当用户拥有以上被选中的权限时，可以访问此菜单。建议仅对子菜单配置权限，父菜单会自动包含。如不选择权限，意味着仅超级管理员可访问本菜单
 				</view>
 			</uni-forms-item>
@@ -34,8 +32,8 @@
 			</uni-forms-item>
 
 			<view class="uni-button-group">
-				<button type="primary" class="uni-button" @click="submitForm" style="width: 100px;">{{$t('common.button.submit')}}</button>
-				<navigator open-type="navigateBack" style="margin-left: 15px;"><button class="uni-button" style="width: 100px;">{{$t('common.button.back')}}</button></navigator>
+				<button type="primary" class="uni-button" @click="submitForm" style="width: 100px;">提交</button>
+				<navigator open-type="navigateBack" style="margin-left: 15px;"><button class="uni-button" style="width: 100px;">返回</button></navigator>
 			</view>
 			<uni-popup class="icon-modal-box" ref="iconPopup" type="center">
 				<view class="icon-modal icon-modal-pc">
@@ -163,9 +161,6 @@
 				}).finally(() => {
 					uni.hideLoading()
 				})
-			},
-			showIconPopup() {
-				this.$refs.iconPopup.open()
 			}
 		}
 	}

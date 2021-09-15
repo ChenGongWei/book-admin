@@ -22,12 +22,6 @@
 			})
 		},
 		onLaunch: function() {
-			console.log(
-			        `%c uniCloud Admin %c 当前版本号 v${version} %c`,
-			        'background:#35495e ; padding: 1px; border-radius: 3px 0 0 3px;  color: #fff',
-			        'background:#007aff ;padding: 1px; border-radius: 0 3px 3px 0;  color: #fff; font-weight: bold;',
-			        'background:transparent'
-			      )
 			console.log('App Launch')
 			if (!this.isTokenValid) {
 				uni.redirectTo({

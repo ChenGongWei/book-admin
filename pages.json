@@ -144,16 +144,6 @@
 				"leftWindow": false,
 				"navigationBarTitleText": "创建超级管理员"
 			}
-		}, {
-			"path": "icons/icons",
-			"style": {
-				"navigationBarTitleText": "图标"
-			}
-		}, {
-			"path": "table/table",
-			"style": {
-				"navigationBarTitleText": "表格"
-			}
 		}]
 	}],
 	"globalStyle": {

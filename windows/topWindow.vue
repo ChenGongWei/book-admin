@@ -34,7 +34,7 @@
 							<text>{{userInfo.nickname || userInfo.username}}</text>
 						</view>
 						<view class="menu-item ">
-							<text class="logout pointer hover-highlight" @click="logout">{{ $t("topwindow.text.signOut") }}</text>
+							<text class="logout pointer hover-highlight" @click="logout">退出</text>
 						</view>
 					</template>
 					<view class="popup-menu__arrow"></view>

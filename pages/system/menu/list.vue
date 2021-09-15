@@ -1,25 +1,15 @@
 <template>
 	<view>
-		<view class="uni-tabs__header">
-			<view class="uni-tabs__nav-wrap">
-				<view class="uni-tabs__nav-scroll">
-					<view class="uni-tabs__nav">
-						<view @click="switchTab('menus')" :class="{'is-active':currentTab==='menus'}" class="uni-tabs__item">
-							{{$t('menu.text.menuManager')}}
-						</view>
-						<view @click="switchTab('pluginMenus')" v-if="pluginMenus.length" :class="{'is-active':currentTab==='pluginMenus'}"
-						 class="uni-tabs__item">
-							{{$t('menu.text.additiveMenu')}}
-							<uni-badge class="menu-badge" :text="pluginMenus.length" type="error"></uni-badge>
-						</view>
-					</view>
-				</view>
+		<view class="uni-header">
+			<view class="uni-group">
+				<view class="uni-title">菜单管理</view>
+				<view class="uni-sub-title"></view>
 			</view>
 		</view>
-		<view v-show="currentTab==='menus'">
+		<view>
 			<view class="uni-header" style="border-bottom: 0;margin-bottom: -15px;">
 				<view class="uni-group">
-					<button @click="navigateTo('./add')" size="mini" plain="true" type="primary">{{$t('menu.button.addFirstLevelMenu')}}</button>
+					<button @click="navigateTo('./add')" size="mini" plain="true" type="primary">新增一级菜单</button>
 				</view>
 				<view class="uni-group">
 
@@ -29,7 +19,7 @@
 				<unicloud-db ref="udb" @load="onqueryload" collection="opendb-admin-menus" :options="options"
 					:where="where" page-data="replace" :orderby="orderby" :getcount="true" :page-size="options.pageSize"
 					:page-current="options.pageCurrent" v-slot:default="{data,pagination,loading,error}">
-					<uni-table :loading="loading" :emptyText="errMsg || $t('common.empty')" border stripe>
+					<uni-table :loading="loading" :emptyText="errMsg || 没有更多数据" border stripe>
 						<uni-tr>
 							<uni-th align="center">排序</uni-th>
 							<uni-th width="200" align="center">名称</uni-th>
@@ -48,44 +38,18 @@
 							<uni-td align="center">
 								<view class="uni-group">
 									<button v-if="!item.url" @click="navigateTo('./add?parent_id='+item.menu_id, false)"
-										class="uni-button" size="mini" type="primary">{{$t('menu.button.addChildMenu')}}</button>
+										class="uni-button" size="mini" type="primary">子菜单</button>
 									<button @click="navigateTo('./edit?id='+item._id, false)" class="uni-button"
-										size="mini" type="primary">{{$t('common.button.edit')}}</button>
+										size="mini" type="primary">修改</button>
 									<button
 										v-if="item.menu_id !== 'system_menu' && item.menu_id !== 'system_management'"
 										@click="confirmDelete(item)" class="uni-button" size="mini"
-										type="warn">{{$t('common.button.delete')}}</button>
+										type="warn">删除</button>
 								</view>
 							</uni-td>
 						</uni-tr>
 					</uni-table>
 				</unicloud-db>
-			</view>
-		</view>
-		<view v-show="currentTab==='pluginMenus'">
-			<view class="uni-header" style="border-bottom: 0;margin-bottom: -15px;">
-				<view class="uni-group">
-					<button style="width: 130px;" @click="addPluginMenus" size="mini" type="primary">添加选中的菜单</button>
-				</view>
-				<view class="uni-group"></view>
-			</view>
-			<view class="uni-container">
-				<uni-table ref="pluginMenusTable" type="selection" border stripe
-					@selection-change="pluginMenuSelectChange">
-					<uni-tr>
-						<uni-th align="center">名称（标识）</uni-th>
-						<uni-th align="center">URL</uni-th>
-						<uni-th align="center">插件菜单 json 文件</uni-th>
-					</uni-tr>
-					<uni-tr v-for="(item,index) in pluginMenus" :key="index">
-						<uni-td>{{item.name}}（{{item.menu_id}}）</uni-td>
-						<uni-td>{{item.url}}</uni-td>
-						<uni-td>{{item.json}}</uni-td>
-					</uni-tr>
-				</uni-table>
-				<view class="uni-sub-title" style="margin-top: 15px;">
-					以上待添加菜单来自于三方插件，添加后，将显示在菜单管理中，若不希望显示在上述表格中时，可手动删除项目中对应的`插件id-menu.json`文件。
-				</view>
 			</view>
 		</view>
 		<!-- #ifndef H5 -->
@@ -106,36 +70,6 @@
 	import {
 		mapActions
 	} from 'vuex'
-	// 查找插件注册的菜单列表（目前仅在开发模式启用，仅限 admin 角色）
-	const pluginMenuJsons = []
-	// #ifndef VUE3
-	if (process.env.NODE_ENV === 'development') {
-		const rootModules = require.context(
-			'../../../',
-			false,
-			/-menu.json$/
-		)
-		rootModules.keys().forEach(function(key) {
-			const json = key.substr(2)
-			rootModules(key).forEach(item => {
-				item.json = json
-				pluginMenuJsons.push(item)
-			})
-		})
-		const pluginModules = require.context(
-			'../../../uni_modules/',
-			true,
-			/menu.json$/
-		)
-		pluginModules.keys().forEach(function(key) {
-			const json = 'uni_modules' + key.substr(1)
-			pluginModules(key).forEach(item => {
-				item.json = json
-				pluginMenuJsons.push(item)
-			})
-		})
-	}
-	// #endif
 
 	// 获取父的个数
 	function getParents(menus, id, depth = 0) {
@@ -174,34 +108,6 @@
 				loading: true,
 				menus: [],
 				errMsg: '',
-				currentTab: 'menus',
-				selectedPluginMenuIndexs: []
-			}
-		},
-		computed: {
-			pluginMenus() {
-				const menus = []
-				if (!this.$hasRole('admin')) {
-					return menus
-				}
-				const dbMenus = this.menus
-				if (!dbMenus.length) {
-					return menus
-				}
-				pluginMenuJsons.forEach(menu => {
-					// 查找尚未被注册到数据库中的菜单
-					if (!dbMenus.find(item => item.menu_id === menu.menu_id)) {
-						menus.push(menu)
-					}
-				})
-				return menus
-			},
-		},
-		watch: {
-			pluginMenus(val) {
-				if (!val.length) {
-					this.currentTab = 'menus'
-				}
 			}
 		},
 		methods: {
@@ -239,9 +145,6 @@
 				})
 				return sortMenus
 			},
-			switchTab(tab) {
-				this.currentTab = tab
-			},
 			loadData(clear = true) {
 				this.$refs.udb.loadData({
 					clear
@@ -276,66 +179,8 @@
 						})
 					}
 				})
-			},
-			pluginMenuSelectChange(e) {
-				this.selectedPluginMenuIndexs = e.detail.index
-			},
-			addPluginMenus(confirmContent) {
-				if (!this.selectedPluginMenuIndexs.length) {
-					return uni.showModal({
-						title: '提示',
-						content: '请选择要添加的菜单！',
-						showCancel: false
-					})
-				}
-				const pluginMenus = this.pluginMenus
-				const menus = []
-				this.selectedPluginMenuIndexs.forEach(i => {
-					const menu = pluginMenus[i]
-					if (menu) {
-						// 拷贝一份，移除 json 字段
-						const dbMenu = JSON.parse(JSON.stringify(menu))
-						delete dbMenu.json
-						menus.push(dbMenu)
-					}
-				})
-				uni.showModal({
-					title: '提示',
-					content: '您确认要添加已选中的菜单吗？',
-					success: (res) => {
-						if (!res.confirm) {
-							return
-						}
-						uni.showLoading({
-							mask: true
-						})
-						const checkAll = menus.length === pluginMenus.length
-						uniCloud.database().collection('opendb-admin-menus').add(menus).then(res => {
-							this.init()
-							uni.showModal({
-								title: '提示',
-								content: '添加菜单成功！',
-								showCancel: false,
-								success: () => {
-									this.$refs.pluginMenusTable.clearSelection()
-									if (checkAll) {
-										this.currentTab = 'menus'
-									}
-									this.loadData()
-								}
-							})
-						}).catch(err => {
-							uni.showModal({
-								title: '提示',
-								content: err.message,
-								showCancel: false
-							})
-						}).finally(() => {
-							uni.hideLoading()
-						})
-					}
-				})
 			}
+			
 		}
 	}
 </script>

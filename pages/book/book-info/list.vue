@@ -10,8 +10,6 @@
 				<button class="uni-button" type="default" size="mini" @click="search">搜索</button>
 				<button v-if="!userInfo.role.includes('student')" class="uni-button" type="primary" size="mini"
 					@click="navigateTo('./add')">新增</button>
-				<button v-if="userInfo.role.includes('admin')" class="uni-button" type="warn" size="mini"
-					:disabled="!selectedIndexs.length" @click="delTable">批量删除</button>
 			</view>
 		</view>
 		<view class="uni-container">
@@ -20,30 +18,18 @@
 				:where="where" page-data="replace" :orderby="orderby" :getcount="true" :page-size="options.pageSize"
 				:page-current="options.pageCurrent" v-slot:default="{data,pagination,loading,error,options}"
 				:options="options">
-				<uni-table :loading="loading" :emptyText="error.message || '没有更多数据'" border stripe type="selection"
-					@selection-change="selectionChange">
+				<uni-table :loading="loading" :emptyText="error.message || '没有更多数据'" border stripe>
 					<uni-tr>
-						<uni-th align="center" filter-type="search" @filter-change="filterChange($event, 'book_id')"
-							sortable @sort-change="sortChange($event, 'book_id')">图书id</uni-th>
-						<uni-th align="center" filter-type="search" @filter-change="filterChange($event, 'book_name')"
-							sortable @sort-change="sortChange($event, 'book_name')">图书名</uni-th>
-						<uni-th align="center" filter-type="search" @filter-change="filterChange($event, 'author')"
-							sortable @sort-change="sortChange($event, 'author')">作者</uni-th>
-						<uni-th align="center" filter-type="search" @filter-change="filterChange($event, 'publisher')"
-							sortable @sort-change="sortChange($event, 'publisher')">出版社</uni-th>
-						<uni-th align="center" filter-type="search" @filter-change="filterChange($event, 'price')"
-							sortable @sort-change="sortChange($event, 'price')">价格/元</uni-th>
-						<uni-th align="center" filter-type="search" @filter-change="filterChange($event, 'type')"
-							sortable @sort-change="sortChange($event, 'type')">类型</uni-th>
-						<uni-th align="center" filter-type="search"
-							@filter-change="filterChange($event, 'introduction')" sortable
-							@sort-change="sortChange($event, 'introduction')">简介</uni-th>
-						<uni-th align="center" filter-type="search" @filter-change="filterChange($event, 'has_num')"
-							sortable @sort-change="sortChange($event, 'has_num')">馆藏数/本</uni-th>
-						<uni-th align="center" filter-type="search" @filter-change="filterChange($event, 'lend_num')"
-							sortable @sort-change="sortChange($event, 'lend_num')">借出/本</uni-th>
-						<uni-th align="center" filter-type="search" @filter-change="filterChange($event, 'lend_num')"
-							sortable @sort-change="sortChange($event, 'lend_num')">总借阅/次</uni-th>
+						<uni-th align="center" sortable @sort-change="sortChange($event, 'book_id')">图书id</uni-th>
+						<uni-th align="center" sortable @sort-change="sortChange($event, 'book_name')">图书名</uni-th>
+						<uni-th align="center" sortable @sort-change="sortChange($event, 'author')">作者</uni-th>
+						<uni-th align="center" sortable @sort-change="sortChange($event, 'publisher')">出版社</uni-th>
+						<uni-th align="center" sortable @sort-change="sortChange($event, 'price')">价格/元</uni-th>
+						<uni-th align="center" sortable @sort-change="sortChange($event, 'type')">类型</uni-th>
+						<uni-th align="center">简介</uni-th>
+						<uni-th align="center" sortable @sort-change="sortChange($event, 'has_num')">馆藏数/本</uni-th>
+						<uni-th align="center" sortable @sort-change="sortChange($event, 'lend_num')">借出/本</uni-th>
+						<uni-th align="center" sortable @sort-change="sortChange($event, 'lend_num')">总借阅/次</uni-th>
 						<uni-th align="center">操作</uni-th>
 					</uni-tr>
 					<uni-tr v-for="(item,index) in data" :key="index">
@@ -163,19 +149,7 @@
 					}
 				})
 			},
-			// 多选处理
-			selectedItems() {
-				var dataList = this.$refs.udb.dataList
-				return this.selectedIndexs.map(i => dataList[i]._id)
-			},
-			// 批量删除
-			delTable() {
-				this.$refs.udb.remove(this.selectedItems())
-			},
-			// 多选
-			selectionChange(e) {
-				this.selectedIndexs = e.detail.index
-			},
+			
 			confirmDelete(id) {
 				this.$refs.udb.remove(id)
 			},
@@ -191,21 +165,10 @@
 					this.$refs.udb.loadData()
 				})
 			},
-			filterChange(e, name) {
-				this._filter[name] = {
-					type: e.filterType,
-					value: e.filter
-				}
-				let newWhere = filterToWhere(this._filter, db.command)
-				if (Object.keys(newWhere).length) {
-					this.where = newWhere
-				} else {
-					this.where = ''
-				}
-				this.$nextTick(() => {
-					this.$refs.udb.loadData()
-				})
-			},
+			/**
+			 * 借阅书籍
+			 * @param {Object} book 书籍信息
+			 */
 			borrowBook(book) {
 				const _id = book._id
 				delete book._id
