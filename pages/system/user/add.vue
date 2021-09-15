@@ -24,8 +24,9 @@
 			</uni-forms-item>
 			<view class="uni-button-group">
 				<button style="width: 100px;" type="primary" class="uni-button" @click="submitForm">提交</button>
-				<navigator open-type="navigateBack" style="margin-left: 15px;"><button style="width: 100px;"
-						class="uni-button">返回</button></navigator>
+				<navigator open-type="navigateBack" style="margin-left: 15px;">
+					<button style="width: 100px;" class="uni-button">返回</button>
+				</navigator>
 			</view>
 		</uni-forms>
 	</view>
@@ -78,14 +79,6 @@
 			this.loadroles()
 		},
 		methods: {
-			/**
-			 * 跳转应用管理的 list 页
-			 */
-			gotoAppList() {
-				uni.navigateTo({
-					url: '../app/list'
-				})
-			},
 
 			/**
 			 * 触发表单提交

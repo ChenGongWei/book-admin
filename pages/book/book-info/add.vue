@@ -1,6 +1,6 @@
 <template>
 	<view class="uni-container">
-		<uni-forms ref="form" :value="formData" validateTrigger="bind">
+		<uni-forms ref="form" :value="formData" :rules="rules" validateTrigger="bind" @submit="submitForm()">
 			<uni-forms-item name="book_id" label="图书id" required>
 				<uni-easyinput placeholder="请输入图书id，不可重复(例如: TP-20153)" v-model="formData.book_id" trim="both" />
 			</uni-forms-item>
@@ -25,12 +25,6 @@
 			<uni-forms-item name="has_num" label="馆藏数" required>
 				<uni-easyinput placeholder="请输入馆藏数" type="number" v-model="formData.has_num" />
 			</uni-forms-item>
-<!-- 			<uni-forms-item name="lend_num" label="借出数">
-				<uni-easyinput placeholder="请输入借出数" type="number" v-model="formData.lend_num" />
-			</uni-forms-item>
-			<uni-forms-item name="lend_total" label="总借阅数">
-				<uni-easyinput placeholder="请输入总借阅数" type="number" v-model="formData.lend_total" />
-			</uni-forms-item> -->
 
 			<view class="uni-button-group">
 				<button type="primary" class="uni-button" style="width: 100px;" @click="submit">提交</button>
@@ -83,9 +77,6 @@
 					])
 				}
 			}
-		},
-		onReady() {
-			this.$refs.form.setRules(this.rules)
 		},
 		methods: {
 			/**

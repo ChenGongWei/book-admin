@@ -68,6 +68,8 @@
 					this.$menuParent.itemChildrens.push(this)
 					this.$menuParent.isActive(this)
 				}
+				// 当前菜单是否选中
+				this.active = this.$menuParent.active.includes(this.index.value)
 			},
 
 			// 点击 menuItem

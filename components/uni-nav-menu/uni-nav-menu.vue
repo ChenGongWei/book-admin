@@ -101,9 +101,9 @@
 						isActive = this.isActive(item)
 						if(isActive) break
 					}
-					if(!isActive){
-						this.closeAll()
-					}
+					// if(!isActive){
+					// 	this.closeAll()
+					// }
 				}
 			}
 		},

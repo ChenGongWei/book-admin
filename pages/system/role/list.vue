@@ -6,7 +6,7 @@
 				<view class="uni-sub-title"></view>
 			</view>
 			<view class="uni-group">
-				<input class="uni-search" type="text" v-model="query" @confirm="search" :placeholder="请输入搜索内容" />
+				<input class="uni-search" type="text" v-model="query" @confirm="search" placeholder="请输入搜索内容" />
 				<button class="uni-button" type="default" size="mini" @click="search">搜索</button>
 				<button class="uni-button" type="primary" size="mini" @click="navigateTo('./add')">新增</button>
 				<!-- #ifdef H5 -->
@@ -23,7 +23,7 @@
 				page-data="replace" :orderby="orderby" :getcount="true" :page-size="options.pageSize"
 				:page-current="options.pageCurrent" v-slot:default="{data,pagination,loading,error,options}"
 				:options="options" loadtime="manual" @load="onqueryload">
-				<uni-table ref="table" :loading="loading" :emptyText="error.message || 没有更多数据" border stripe
+				<uni-table ref="table" :loading="loading" :emptyText="error.message || '没有更多数据'" border stripe
 					class="table-pc">
 					<uni-tr>
 						<uni-th align="center" sortable @sort-change="sortChange($event, 'role_id')">唯一ID</uni-th>

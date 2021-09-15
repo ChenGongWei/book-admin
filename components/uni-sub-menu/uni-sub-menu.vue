@@ -1,12 +1,15 @@
 <template>
 	<view class="uni-sub-menu">
-		<view class="uni-sub-menu__title"  :class="{'is-disabled':disabled}" :style="{paddingLeft:paddingLeft}" @click="select">
+		<view class="uni-sub-menu__title" :class="{'is-disabled':disabled}" :style="{paddingLeft:paddingLeft}"
+			@click="select">
 			<view class="uni-sub-menu__title-sub" :style="{color:disabled?'#999':textColor}">
 				<slot name="title"></slot>
 			</view>
-			<uni-icons class="uni-sub-menu__icon" :class="{transition:isOpen}" type="arrowdown" color="#bbb" size="14"></uni-icons>
+			<uni-icons class="uni-sub-menu__icon" :class="{transition:isOpen}" type="arrowdown" color="#bbb" size="14">
+			</uni-icons>
 		</view>
-		<view class="uni-sub-menu__content" :class="{'uni-sub-menu--close':!isOpen}" :style="{'background-color':backgroundColor}">
+		<view class="uni-sub-menu__content" :class="{'uni-sub-menu--close':!isOpen}"
+			:style="{'background-color':backgroundColor}">
 			<view id="content--hook">
 				<slot></slot>
 			</view>
@@ -22,8 +25,8 @@
 		props: {
 			// 唯一标识
 			index: {
-				type: [String,Object],
-				default(){
+				type: [String, Object],
+				default () {
 					return ''
 				}
 			},
@@ -48,7 +51,7 @@
 				height: 0,
 				oldheight: 0,
 				isOpen: false,
-				textColor:'#303133'
+				textColor: '#303133'
 			};
 		},
 		computed: {
@@ -84,12 +87,15 @@
 				this.$subMenu = this.rootMenu.SubMenu
 
 				// 将当前插入到menu数组中
-				if(this.$menuParent){
+				if (this.$menuParent) {
 					this.$menuParent.subChildrens.push(this)
 				}
+
+				// 当前菜单是否展开
+				this.isOpen = this.index.children.some(menu => this.$menuParent.active.includes(menu.value))
 			},
 			select() {
-				if(this.disabled) return
+				if (this.disabled) return
 				// 手动开关 sunMenu
 				this.$menuParent.selectMenu(this)
 			},
@@ -155,10 +161,10 @@
 		/* background-color: #f5f5f5; */
 		color: red;
 	}
+
 	.uni-sub-menu__title.is-disabled:hover {
 		background-color: inherit;
 		color: #999;
 		cursor: not-allowed;
 	}
-
 </style>
