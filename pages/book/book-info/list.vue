@@ -14,7 +14,7 @@
 		</view>
 		<view class="uni-container">
 			<unicloud-db ref="udb" collection="book-info"
-				field="book_id,book_name,author,publisher,price,type,introduction,has_num,lend_num,lend_total"
+				field="book_id,book_name,book_img,author,publisher,price,type,introduction,has_num,lend_num,lend_total"
 				:where="where" page-data="replace" :orderby="orderby" :getcount="true" :page-size="options.pageSize"
 				:page-current="options.pageCurrent" v-slot:default="{data,pagination,loading,error,options}"
 				:options="options">
@@ -23,6 +23,8 @@
 						<uni-th align="center" sortable @sort-change="sortChange($event, 'book_id')" width="100">图书id
 						</uni-th>
 						<uni-th align="center" sortable @sort-change="sortChange($event, 'book_name')" width="150">图书名
+						</uni-th>
+						<uni-th align="center" sortable @sort-change="sortChange($event, 'book_img')">图书封面
 						</uni-th>
 						<uni-th align="center" sortable @sort-change="sortChange($event, 'author')" width="150">作者
 						</uni-th>
@@ -44,6 +46,11 @@
 					<uni-tr v-for="(item,index) in data" :key="index">
 						<uni-td align="center"> {{item.book_id}} </uni-td>
 						<uni-td align="center"> {{item.book_name}} </uni-td>
+						<uni-td align="center">
+							<image style="width: 80px; height: 80px;"
+								:src="item.book_img || 'https://vkceyugu.cdn.bspapp.com/VKCEYUGU-005a2f30-8270-4e02-be5d-9eff6f5d7322/ea2e0b53-a4c2-436b-ad56-1b8e8f2c2ebb.jpg'"
+								mode="aspectFill" />
+						</uni-td>
 						<uni-td align="center"> {{item.author}} </uni-td>
 						<uni-td align="center"> {{item.publisher}} </uni-td>
 						<uni-td align="center"> {{item.price}} </uni-td>

@@ -7,6 +7,10 @@
 			<uni-forms-item name="book_name" label="图书名" required>
 				<uni-easyinput placeholder="请填写图书名" v-model="formData.book_name" trim="both" />
 			</uni-forms-item>
+			<uni-forms-item name="book_img" label="图书封面">
+				<uni-file-picker ref="files" :auto-upload="false" v-model="imageValue" file-mediatype="image" :limit="1"
+					@success="success" @fail="fail" @select="select" @delete="deleteImg" />
+			</uni-forms-item>
 			<uni-forms-item name="author" label="作者">
 				<uni-easyinput placeholder="请填写作者" v-model="formData.author" trim="both" />
 			</uni-forms-item>
@@ -64,6 +68,7 @@
 				formData: {
 					"book_id": "",
 					"book_name": "",
+					"book_img": "",
 					"author": "",
 					"publisher": "",
 					"price": null,
@@ -78,7 +83,9 @@
 					...getValidator(["book_id", "book_name", "author", "publisher", "price", "type", "introduction",
 						"has_num", "lend_num", "lend_total"
 					])
-				}
+				},
+				needUpload: false,
+				imageValue: []
 			}
 		},
 		onLoad(e) {
@@ -91,11 +98,15 @@
 			 * 触发表单提交
 			 */
 			submit() {
-				uni.showLoading({
-					mask: true
-				})
-				this.$refs.form.submit().then((res) => {
-					this.submitForm(res)
+				// uni.showLoading({
+				// 	mask: true
+				// })
+				this.$refs.form.validate().then((res) => {
+					if (this.needUpload) {
+						this.upload()
+					} else {
+						this.submitForm(res)
+					}
 				}).catch((errors) => {
 					uni.hideLoading()
 				})
@@ -128,11 +139,15 @@
 					mask: true
 				})
 				db.collection(dbCollectionName).doc(id).field(
-						'book_id,book_name,author,publisher,price,type,introduction,has_num,lend_num,lend_total').get()
+						'book_id,book_name,book_img,author,publisher,price,type,introduction,has_num,lend_num,lend_total').get()
 					.then((res) => {
 						const data = res.result.data[0]
 						if (data) {
 							this.formData = data
+							if(data.book_img)
+							this.imageValue = [{
+								url: data.book_img
+							}]
 						}
 					}).catch((err) => {
 						uni.showModal({
@@ -142,6 +157,40 @@
 					}).finally(() => {
 						uni.hideLoading()
 					})
+			},
+
+			// 获取上传状态
+			select(e) {
+				this.needUpload = true;
+			},
+
+			// 上传成功
+			success(e) {
+				console.log('上传成功', e, this.imageValue)
+				this.formData.book_img = e.tempFilePaths[0]
+				let val = { ...this.formData }
+				delete val._id
+				this.submitForm(val)
+			},
+
+			// 上传失败
+			fail(e) {
+				console.log('上传失败：', e)
+				uni.showModal({
+					content: '图片上传失败',
+					showCancel: false
+				})
+				let val = { ...this.formData }
+				delete val._id
+				this.submitForm(val)
+
+			},
+
+			deleteImg(e) {
+				this.needUpload = false;
+			},
+			upload() {
+				this.$refs.files.upload()
 			}
 		}
 	}

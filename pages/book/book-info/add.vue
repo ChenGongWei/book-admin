@@ -7,6 +7,10 @@
 			<uni-forms-item name="book_name" label="图书名" required>
 				<uni-easyinput placeholder="请输入图书名" v-model="formData.book_name" trim="both" />
 			</uni-forms-item>
+			<uni-forms-item name="book_img" label="图书封面">
+				<uni-file-picker ref="files" :auto-upload="false" v-model="imageValue" file-mediatype="image" :limit="1"
+					@progress="progress" @success="success" @fail="fail" @select="select" @delete="deleteImg"/>
+			</uni-forms-item>
 			<uni-forms-item name="author" label="作者">
 				<uni-easyinput placeholder="请输入作者" v-model="formData.author" trim="both" />
 			</uni-forms-item>
@@ -61,6 +65,7 @@
 				formData: {
 					"book_id": "",
 					"book_name": "",
+					"book_img": "",
 					"author": "",
 					"publisher": "",
 					"price": null,
@@ -75,7 +80,9 @@
 					...getValidator(["book_id", "book_name", "author", "publisher", "price", "type", "introduction",
 						"has_num", "lend_num", "lend_total"
 					])
-				}
+				},
+				needUpload: false,
+				imageValue: []
 			}
 		},
 		onReady() {
@@ -90,7 +97,11 @@
 					mask: true
 				})
 				this.$refs.form.validate().then((res) => {
-					this.submitForm(res)
+					if (this.needUpload) {
+						this.upload()
+					} else {
+						this.submitForm(res)
+					}
 				}).catch((errors) => {
 					uni.hideLoading()
 				})
@@ -112,6 +123,39 @@
 				}).finally(() => {
 					uni.hideLoading()
 				})
+			},
+			// 获取上传状态
+			select(e) {
+				this.needUpload = true;
+			},
+			
+			// 上传成功
+			success(e) {
+				console.log('上传成功', e, this.imageValue)
+				this.formData.book_img = e.tempFilePaths[0]
+				let val = { ...this.formData }
+				delete val._id
+				this.submitForm(val)
+			},
+			
+			// 上传失败
+			fail(e) {
+				console.log('上传失败：', e)
+				uni.showModal({
+					content: '图片上传失败',
+					showCancel: false
+				})
+				let val = { ...this.formData }
+				delete val._id
+				this.submitForm(val)
+			
+			},
+			
+			deleteImg(e) {
+				this.needUpload = false;
+			},
+			upload() {
+				this.$refs.files.upload()
 			}
 		}
 	}
