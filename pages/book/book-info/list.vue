@@ -20,17 +20,26 @@
 				:options="options">
 				<uni-table :loading="loading" :emptyText="error.message || '没有更多数据'" border stripe>
 					<uni-tr>
-						<uni-th align="center" sortable @sort-change="sortChange($event, 'book_id')">图书id</uni-th>
-						<uni-th align="center" sortable @sort-change="sortChange($event, 'book_name')">图书名</uni-th>
-						<uni-th align="center" sortable @sort-change="sortChange($event, 'author')">作者</uni-th>
-						<uni-th align="center" sortable @sort-change="sortChange($event, 'publisher')">出版社</uni-th>
-						<uni-th align="center" sortable @sort-change="sortChange($event, 'price')">价格/元</uni-th>
-						<uni-th align="center" sortable @sort-change="sortChange($event, 'type')">类型</uni-th>
-						<uni-th align="center">简介</uni-th>
-						<uni-th align="center" sortable @sort-change="sortChange($event, 'has_num')">馆藏数/本</uni-th>
-						<uni-th align="center" sortable @sort-change="sortChange($event, 'lend_num')">借出/本</uni-th>
-						<uni-th align="center" sortable @sort-change="sortChange($event, 'lend_num')">总借阅/次</uni-th>
-						<uni-th align="center">操作</uni-th>
+						<uni-th align="center" sortable @sort-change="sortChange($event, 'book_id')" width="100">图书id
+						</uni-th>
+						<uni-th align="center" sortable @sort-change="sortChange($event, 'book_name')" width="150">图书名
+						</uni-th>
+						<uni-th align="center" sortable @sort-change="sortChange($event, 'author')" width="150">作者
+						</uni-th>
+						<uni-th align="center" sortable @sort-change="sortChange($event, 'publisher')" width="150">出版社
+						</uni-th>
+						<uni-th align="center" sortable @sort-change="sortChange($event, 'price')" width="80">价格/元
+						</uni-th>
+						<uni-th align="center" sortable @sort-change="sortChange($event, 'type')" width="150">类型
+						</uni-th>
+						<uni-th align="center" width="400">简介</uni-th>
+						<uni-th align="center" sortable @sort-change="sortChange($event, 'has_num')" width="100">馆藏数/本
+						</uni-th>
+						<uni-th align="center" sortable @sort-change="sortChange($event, 'lend_num')" width="90">借出/本
+						</uni-th>
+						<uni-th align="center" sortable @sort-change="sortChange($event, 'lend_num')" width="100">总借阅/次
+						</uni-th>
+						<uni-th align="center" width="100">操作</uni-th>
 					</uni-tr>
 					<uni-tr v-for="(item,index) in data" :key="index">
 						<uni-td align="center"> {{item.book_id}} </uni-td>
@@ -39,7 +48,7 @@
 						<uni-td align="center"> {{item.publisher}} </uni-td>
 						<uni-td align="center"> {{item.price}} </uni-td>
 						<uni-td align="center"> {{item.type}} </uni-td>
-						<uni-td align="center"> {{item.introduction}} </uni-td>
+						<uni-td align="center"> <text class="ellipses">{{item.introduction}}</text> </uni-td>
 						<uni-td align="center"> {{item.has_num}} </uni-td>
 						<uni-td align="center"> {{item.lend_num}} </uni-td>
 						<uni-td align="center"> {{item.lend_total}} </uni-td>
@@ -132,6 +141,7 @@
 				this.$refs.udb.loadData({
 					clear
 				})
+
 			},
 			onPageChanged(e) {
 				this.$refs.udb.loadData({
@@ -149,7 +159,7 @@
 					}
 				})
 			},
-			
+
 			confirmDelete(id) {
 				this.$refs.udb.remove(id)
 			},
@@ -187,13 +197,9 @@
 								lend_num: book.lend_num + 1,
 								lend_total: book.lend_total + 1
 							}).then((res) => {
-								console.log(this.userInfo)
 								db.collection('book-borrow').add({
 									book_uni_id: _id,
-									book_id: book.book_id,
-									book_name: book.book_name,
-									lend_uid: this.userInfo.username,
-									lend_user: this.userInfo.nickname,
+									lend_uid: this.userInfo._id,
 									end_date: new Date().getTime() + (30 * 24 * 3600 * 1000),
 								}).then(() => {
 									uni.showToast({
@@ -226,5 +232,12 @@
 		}
 	}
 </script>
-<style>
+<style scoped>
+	.ellipses {
+		overflow: hidden;
+		text-overflow: ellipsis;
+		display: -webkit-box;
+		-webkit-line-clamp: 3;
+		-webkit-box-orient: vertical;
+	}
 </style>

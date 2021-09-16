@@ -14,8 +14,8 @@
 			</view>
 		</view>
 		<view class="uni-container">
-			<unicloud-db ref="udb" collection="book-borrow"
-				field="book_uni_id,book_id,book_name,lend_uid,lend_user,create_date,end_date,status" :where="where+searchWhere"
+			<unicloud-db ref="udb" collection="book-borrow,book-info,uni-id-users"
+				field="book_uni_id{book_id, book_name},lend_uid{username, nickname},create_date,end_date,status" :where="where+searchWhere"
 				page-data="replace" :orderby="orderby" :getcount="true" :page-size="options.pageSize"
 				:page-current="options.pageCurrent" v-slot:default="{data,pagination,loading,error,options}"
 				:options="options">
@@ -31,10 +31,10 @@
 						<uni-th width="204" align="center">操作</uni-th>
 					</uni-tr>
 					<uni-tr v-for="(item,index) in data" :key="index">
-						<uni-td align="center"> {{item.book_id}} </uni-td>
-						<uni-td align="center"> {{item.book_name}} </uni-td>
-						<uni-td align="center"> {{item.lend_uid}} </uni-td>
-						<uni-td align="center"> {{item.lend_user}} </uni-td>
+						<uni-td align="center"> {{item.book_uni_id[0].book_id}} </uni-td>
+						<uni-td align="center"> {{item.book_uni_id[0].book_name}} </uni-td>
+						<uni-td align="center"> {{item.lend_uid[0].username}} </uni-td>
+						<uni-td align="center"> {{item.lend_uid[0].nickname}} </uni-td>
 						<uni-td align="center">
 							<uni-dateformat :date="item.create_date" :threshold="[0, 0]" />
 						</uni-td>
@@ -49,7 +49,7 @@
 								<button @click="confirmDelete(item._id)" class="uni-button" size="mini"
 									type="warn">删除</button> -->
 
-								<button v-if="!item.status" @click="returnBook(item._id, item.book_uni_id, item.book_name)"
+								<button v-if="!item.status" @click="returnBook(item._id, item.book_uni_id[0]._id, item.book_uni_id[0].book_name)"
 									class="uni-button" size="mini" type="primary">归还</button>
 								<button v-if="!item.status" @click="renewBook(item._id, item.book_name)" class="uni-button"
 									size="mini">续借</button>
@@ -77,7 +77,7 @@
 
 	const db = uniCloud.database()
 	// 表查询配置
-	const dbOrderBy = 'create_date desc' // 排序字段
+	const dbOrderBy = 'end_date desc' // 排序字段
 	const dbSearchFields = ['book_id', 'book_name', 'lead_uid', 'lend_user'] // 模糊搜索字段，支持模糊搜索的字段列表
 	// 分页配置
 	const pageSize = 20
@@ -90,10 +90,9 @@
 
 	export default {
 		data() {
-			console.log(123)
-			let username = uni.getStorageSync('lastUsername')
+			let id = uni.getStorageSync('id')
 			let role = JSON.parse(uni.getStorageSync('role') || '[]') || []
-			let where = role[0] === 'student' ? ` lend_uid == '${username}'` : ''
+			let where = role[0] === 'student' ? ` lend_uid[0]._id == ${id}` : ''
 			return {
 				query: '',
 				where: where,
