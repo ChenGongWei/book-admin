@@ -14,7 +14,7 @@
 		</view>
 		<view class="uni-container">
 			<unicloud-db ref="udb" collection="book-info"
-				field="book_id,book_name,book_img,author,publisher,price,type,introduction,has_num,lend_num,lend_total"
+				field="book_id,book_name,book_img,author,publisher,price,type,introduction,has_num,lend_num,lend_total,create_date"
 				:where="where" page-data="replace" :orderby="orderby" :getcount="true" :page-size="options.pageSize"
 				:page-current="options.pageCurrent" v-slot:default="{data,pagination,loading,error,options}"
 				:options="options">
@@ -24,22 +24,24 @@
 						</uni-th>
 						<uni-th align="center" sortable @sort-change="sortChange($event, 'book_name')" width="150">图书名
 						</uni-th>
-						<uni-th align="center" sortable @sort-change="sortChange($event, 'book_img')">图书封面
+						<uni-th align="center" width="120">图书封面
 						</uni-th>
-						<uni-th align="center" sortable @sort-change="sortChange($event, 'author')" width="150">作者
+						<uni-th align="center" sortable @sort-change="sortChange($event, 'author')" width="120">作者
 						</uni-th>
-						<uni-th align="center" sortable @sort-change="sortChange($event, 'publisher')" width="150">出版社
+						<uni-th align="center" sortable @sort-change="sortChange($event, 'publisher')" width="120">出版社
 						</uni-th>
 						<uni-th align="center" sortable @sort-change="sortChange($event, 'price')" width="80">价格/元
 						</uni-th>
-						<uni-th align="center" sortable @sort-change="sortChange($event, 'type')" width="150">类型
+						<uni-th align="center" sortable @sort-change="sortChange($event, 'type')" width="120">类型
 						</uni-th>
 						<uni-th align="center" width="400">简介</uni-th>
 						<uni-th align="center" sortable @sort-change="sortChange($event, 'has_num')" width="100">馆藏数/本
 						</uni-th>
 						<uni-th align="center" sortable @sort-change="sortChange($event, 'lend_num')" width="90">借出/本
 						</uni-th>
-						<uni-th align="center" sortable @sort-change="sortChange($event, 'lend_num')" width="100">总借阅/次
+						<uni-th align="center" sortable @sort-change="sortChange($event, 'lend_total')" width="100">总借阅/次
+						</uni-th>
+						<uni-th align="center" sortable @sort-change="sortChange($event, 'create_date')" width="100">入馆时间
 						</uni-th>
 						<uni-th align="center" width="100">操作</uni-th>
 					</uni-tr>
@@ -59,6 +61,9 @@
 						<uni-td align="center"> {{item.has_num}} </uni-td>
 						<uni-td align="center"> {{item.lend_num}} </uni-td>
 						<uni-td align="center"> {{item.lend_total}} </uni-td>
+						<uni-td align="center"> 
+							<uni-dateformat :threshold="[0, 0]" :date="item.create_date"></uni-dateformat>
+						</uni-td>
 						<uni-td align="center">
 							<view class="uni-group">
 								<button v-if="!userInfo.role.includes('student')"
@@ -94,7 +99,7 @@
 
 	const db = uniCloud.database()
 	// 表查询配置
-	const dbOrderBy = 'lend_total desc' // 排序字段
+	const dbOrderBy = 'create_date desc' // 排序字段
 	const dbSearchFields = ['book_id', 'book_name', 'author'] // 模糊搜索字段，支持模糊搜索的字段列表
 	// 分页配置
 	const pageSize = 20
