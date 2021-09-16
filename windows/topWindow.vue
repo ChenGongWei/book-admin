@@ -29,13 +29,22 @@
 				<view class="uni-mask" @click="togglePopupMenu"></view>
 				<view class="navbar-menu">
 					<template v-if="userInfo.username">
-						<view class="menu-item username" @click="toPasswordPage">
+						<view class="menu-item username">
 							<uni-icons class="person" type="person" color="#666" size="13"></uni-icons>
 							<text>{{userInfo.nickname || userInfo.username}}</text>
+							<view class="controls">
+								<view class="controls-item" @click="toPasswordPage">
+									修改密码
+								</view> 
+								<view class="controls-item" @click="logout">
+									退出登录
+								</view>
+							</view>
 						</view>
-						<view class="menu-item ">
+						
+						<!-- <view class="menu-item ">
 							<text class="logout pointer hover-highlight" @click="logout">退出</text>
-						</view>
+						</view> -->
 					</template>
 					<view class="popup-menu__arrow"></view>
 				</view>
@@ -207,13 +216,13 @@
 	.username {
 		display: flex;
 		align-items: center;
-		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;
 	}
 
 	.navbar-middle {
 		text-align: center;
+		overflow: hidden;
 	}
 
 	.username {
@@ -392,5 +401,55 @@
 		font-stretch: 12px;
 		vertical-align: baseline;
 		text-decoration: underline;
+	}
+	
+	.username {
+		position: relative;
+		padding: 15px 8px;
+		z-index: 9999999;
+		
+		&:hover .controls {
+			opacity: 1;
+			transform: scaleY(1);
+		}
+		
+		.controls {
+			position: absolute;
+			top: 45px;
+			right: 0;
+			width: 90px;
+			text-align: center;
+			background-color: #fff;
+			box-shadow: 0 0 5px 0 #ccc;
+			transform-origin: 50% -10px;
+			transform: scaleY(.5);
+			opacity: 0;
+			transition: all .2s linear;
+
+			
+			&::before {
+				content: '';
+				display: inline-block;
+				position: absolute;
+				top: -6px;
+				left: 42px;
+				width: 0;
+				height: 0;
+				border: 6px solid #fff;
+				// border-top-color: #eee;
+				// border-right-color: #eee;
+				box-shadow: 3px -3px 7px 0 #ccc;
+				transform: rotate(-45deg);
+			}
+			
+			.controls-item {
+				padding: 7px 0;
+				cursor: pointer;
+			}
+			
+			.controls-item:nth-child(1) {
+				border-bottom: 1px solid #ccc;
+			}
+		}
 	}
 </style>
