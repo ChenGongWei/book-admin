@@ -51,7 +51,7 @@
 
 								<button v-if="!item.status" @click="returnBook(item._id, item.book_uni_id[0]._id, item.book_uni_id[0].book_name)"
 									class="uni-button" size="mini" type="primary">归还</button>
-								<button v-if="!item.status" @click="renewBook(item._id, item.book_name)" class="uni-button"
+								<button v-if="!item.status" @click="renewBook(item._id, item.book_uni_id[0].book_name)" class="uni-button"
 									size="mini">续借</button>
 							</view>
 						</uni-td>
